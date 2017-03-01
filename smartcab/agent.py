@@ -25,7 +25,7 @@ class LearningAgent(Agent):
         ###########
         # Set any additional class parameters as needed
         self.trial = 0
-        self.gamma = 0.5
+#        self.gamma = 0.5
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -125,7 +125,11 @@ class LearningAgent(Agent):
             Q = self.Q[state]
             action_random = random.choice(self.env.valid_actions)
             epsilon = self.epsilon
-            action_with_max_Q = max(Q, key=Q.get)
+            # Pick first maximum
+            #action_with_max_Q = max(Q, key=Q.get)
+            # Randomly pick from maximum
+            maxQ = self.get_maxQ(state)
+            action_with_max_Q = random.choice(filter(lambda x: Q[x] == maxQ, Q))
             action = np.random.choice([action_random, action_with_max_Q], p = [epsilon, 1-epsilon])
         return action
 
@@ -144,11 +148,11 @@ class LearningAgent(Agent):
             Q = self.Q[state]
             alpha = self.alpha
             # Add future rewards.
-            state_next = self.build_state()
-            self.createQ(state_next)
-            Q_next = self.Q[state_next]
-            Q_next_max = max(Q_next.values())
-            Q[action] = (1 - alpha) * Q[action] + alpha * (reward + self.gamma * Q_next_max)
+            # state_next = self.build_state()
+            # self.createQ(state_next)
+            # Q_next = self.Q[state_next]
+            # Q_next_max = max(Q_next.values())
+            Q[action] = (1 - alpha) * Q[action] + alpha * reward
         return
 
 
